@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Header from '../components/header';
 import { useAuthStore } from '../store/useAuthStore.js';
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { Link, useNavigate } from "react-router-dom"; // Import useNavigate
 import Login from "./Login";
 const LandingPage = () => {
   // Japanese learning phrases
@@ -74,23 +74,18 @@ const LandingPage = () => {
   // Testimonials
   const testimonials = [
     {
-      name: "Alex K.",
+      name: "Akshat.",
       comment: "KataHira helped me learn hiragana and katakana in just two weeks! The practice exercises make it stick.",
       role: "Beginner Learner",
       avatar: "A"
     },
     {
-      name: "Mei L.",
+      name: "Vaibhav",
       comment: "As someone who already knew basic Japanese, KataHira's intermediate and advanced lessons really helped me improve my grammar.",
       role: "Intermediate Learner",
       avatar: "M"
     },
-    {
-      name: "David T.",
-      comment: "The cultural contexts and real-world examples made learning Japanese so much more engaging and practical.",
-      role: "Business Traveler",
-      avatar: "D"
-    }
+    
   ];
 
   // Pricing plans
@@ -149,7 +144,7 @@ const LandingPage = () => {
     },
     {
       question: "Can I use KataHira on my mobile device?",
-      answer: "Yes, KataHira is fully responsive and works on all devices. We also have dedicated mobile apps for iOS and Android for learning on the go."
+      answer: "Yes, KataHira is fully responsive and works on all devices. "
     },
     {
       question: "How is KataHira different from other language learning apps?",
@@ -448,7 +443,7 @@ const LandingPage = () => {
             Choose the plan that fits your learning goals. All plans include access to our community forum.
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {pricingPlans.map((plan, index) => (
               <div
                 key={index}
@@ -480,7 +475,7 @@ const LandingPage = () => {
                 </button>
               </div>
             ))}
-          </div>
+          </div> */}
         </div>
       </section>
 
@@ -526,12 +521,10 @@ const LandingPage = () => {
             Join over 1 million learners who are mastering Japanese with KataHira today.
           </p>
           <div className="flex flex-wrap gap-4 justify-center animate-fade-in animate-delay-2">
-            <button className="bg-white hover:bg-stone-100 text-amber-700 px-8 py-3 rounded-full font-medium text-lg transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+            <button onClick={()=>navigate("/home")} className="bg-white hover:bg-stone-100 text-amber-700 px-8 py-3 rounded-full font-medium text-lg transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
               Get Started for Free
             </button>
-            <button className="border border-white hover:border-stone-200 px-8 py-3 rounded-full font-medium text-lg transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-              Watch Demo
-            </button>
+            
           </div>
         </div>
       </section>
@@ -565,27 +558,16 @@ const LandingPage = () => {
             <div>
               <h3 className="font-bold text-lg mb-4 text-white">Company</h3>
               <ul className="space-y-2">
-                <li><a href="#" className="hover:text-amber-400 transition-colors">About Us</a></li>
-                <li><a href="#" className="hover:text-amber-400 transition-colors">Careers</a></li>
-                <li><a href="#" className="hover:text-amber-400 transition-colors">Blog</a></li>
-                <li><a href="#" className="hover:text-amber-400 transition-colors">Press</a></li>
-                <li><a href="#" className="hover:text-amber-400 transition-colors">Contact</a></li>
+                <li><Link to="/about"  className="hover:text-amber-400 transition-colors">About Us</Link></li>
+                <li><Link to="/contact"  className="hover:text-amber-400 transition-colors">Contact</Link></li>
+                
               </ul>
             </div>
 
-            <div>
-              <h3 className="font-bold text-lg mb-4 text-white">Support</h3>
-              <ul className="space-y-2">
-                <li><a href="#" className="hover:text-amber-400 transition-colors">Help Center</a></li>
-                <li><a href="#" className="hover:text-amber-400 transition-colors">Terms of Service</a></li>
-                <li><a href="#" className="hover:text-amber-400 transition-colors">Privacy Policy</a></li>
-                <li><a href="#" className="hover:text-amber-400 transition-colors">Cookie Policy</a></li>
-                <li><a href="#" className="hover:text-amber-400 transition-colors">Status</a></li>
-              </ul>
-            </div>
+            
           </div>
           <div className="pt-8 border-t border-stone-700 flex flex-col md:flex-row justify-between items-center">
-            <p className="mb-4 md:mb-0">© 2023 KataHira. All rights reserved.</p>
+            <p className="mb-4 md:mb-0">© 2025 KataHira. All rights reserved.</p>
             <div className="flex space-x-6">
               <a href="#" className="hover:text-amber-400 transition-colors">English</a>
               <a href="#" className="hover:text-amber-400 transition-colors">日本語</a>
