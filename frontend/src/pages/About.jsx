@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import Header from '../components/header';
+import Header from '../components/Header';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { useNavigate } from "react-router-dom";
 import Login from "./Login";

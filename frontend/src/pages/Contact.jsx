@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import Header from '../components/header';
+import Header from '../components/Header';
 import emailjs from '@emailjs/browser';
 import { toast, Toaster } from 'react-hot-toast';
 import { useNavigate } from "react-router-dom";
