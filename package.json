@@ -11,7 +11,7 @@
     "type": "git",
     "url": "git+https://github.com/Vansh-Pandey/KATAHIRA-2.git"
   },
-  "devDependencies": {
+  "dependencies": {
     "@vitejs/plugin-react": "^4.5.1"
   },
   "keywords": [],
