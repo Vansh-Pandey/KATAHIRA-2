@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useProfileStore } from '../store/useProfileStore';
 import { useAuthStore } from '../store/useAuthStore';
 import { toast } from 'react-toastify';
-import Header from '../components/header';
+import Header from '../components/Header';
 import { useNavigate } from 'react-router-dom';
 
 const Profile = () => {

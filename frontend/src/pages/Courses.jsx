@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCourseStore } from '../store/useCourseStore';
 import { useProfileStore } from '../store/useProfileStore';
 import { toast } from 'react-toastify';
-import Header from '../components/header';
+import Header from '../components/Header';
 import { useAuthStore } from '../store/useAuthStore';
 
 const Courses = () => {
