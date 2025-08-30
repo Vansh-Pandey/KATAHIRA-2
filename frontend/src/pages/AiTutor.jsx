@@ -1,26 +1,31 @@
 import { useState, useEffect, useRef } from 'react';
-
+import { useAiStore } from '../store/useAiStore'; // adjust path
+import { useAuthStore } from '../store/useAuthStore';
 const AiTutor = () => {
-    const [messages, setMessages] = useState([
-        {
-            id: 1,
-            type: 'tutor',
-            content: "こんにちは！私は田中先生です。日本語を一緒に学びましょう！何か質問がありますか？",
-            translation: "Hello! I'm Tanaka-sensei. Let's learn Japanese together! Do you have any questions?",
-            timestamp: new Date()
-        }
-    ]);
+    const { messages, addMessage, loadHistory, clearHistory, userId, setUserId } = useAiStore();
     const [inputMessage, setInputMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [showTranslation, setShowTranslation] = useState({});
     const messagesEndRef = useRef(null);
     const inputRef = useRef(null);
-    const [userHistory, setUserHistory] = useState([]);
+    const { authUser, checkAuth } = useAuthStore();
+    useEffect(() => {
+        checkAuth();
+    }, []);
 
-    const GEMINI_API_KEY = "AIzaSyCZe1Hy6SXx_vTWQflgLckO11yuLxAdEn0";
-    const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
-
+    useEffect(() => {
+        if (authUser === null && location.pathname !== "/") {
+            navigate("/", { replace: true });
+        }
+    }, [authUser, location.pathname]);
     // Sample conversation starters
+    useEffect(() => {
+        if (authUser?._id) {
+            setUserId(authUser._id);           // <-- store the userId in Zustand
+            // loadHistory(authUser._id);         // <-- optional: load previous chat history
+        }
+    }, [authUser, setUserId, loadHistory]);
+
     const conversationStarters = [
         "How do I introduce myself in Japanese?",
         "What's the difference between は and が?",
@@ -40,135 +45,27 @@ const AiTutor = () => {
         scrollToBottom();
     }, [messages]);
 
-    const generateTutorResponse = async (userMessage) => {
-        try {
-            const conversationHistory = userHistory
-            .slice(-5) // limit to last 5 messages to avoid overloading prompt
-            .map((msg, index) => `Previous Q${index + 1}: "${msg}"`)
-            .join('\n');
-            const prompt = `You are Tanaka-sensei (田中先生), a kind, patient, and highly experienced Japanese language teacher with over 15 years of teaching experience. You have a warm, nurturing tone and love helping eager beginners learn Japanese step-by-step.
 
-Your student is a beginner and may feel unsure at times, but they are curious and motivated. You are here to support them gently and help them build confidence.
-
-🧠 Your teaching method is structured and progressive:
-1. Start with **Hiragana** → then **Katakana** → then **basic Kanji**.
-2. Once letters are learned, move to:
-   - Common **vocabulary**
-   - Simple **grammar patterns**
-   - **Basic sentence structure**
-   - **Polite conversation**
-3. Only introduce **Kanji** after the Hiragana foundation is strong.
-4. Keep every response focused on 1 concept at a time.
-5. Build naturally from previous knowledge, like a personal tutor.
-
-💬 When you reply:
-- Use gentle encouragement, even if the student makes mistakes.
-- Use beginner-friendly, simple explanations.
-- When introducing Japanese text, always include:
-  - **Kanji** (if appropriate)
-  - **Hiragana** (in parentheses)
-  - **Romaji**
-  - **English meaning**
-- Include examples to help reinforce the learning. Use short, practical sentences.
-- If the student makes a mistake, **gently correct it** and explain *why* in a positive tone.
-- Add Japanese phrases occasionally with translations (e.g.,「がんばって！」(Ganbatte!) – "Do your best!").
-- Provide **cultural notes** when relevant (e.g., casual vs polite form, real-life usage in Japan).
-- Keep it friendly and natural, like a private tutoring session, not robotic.
-- End with a small interactive challenge or question to keep the student engaged.
-
-🎯 Teaching Focus Priority (adjust depending on student level):
-1. **Letters** (Hiragana → Katakana → Kanji)
-2. **Pronunciation**
-3. **Basic Vocab**
-4. **Grammar Patterns**
-5. **Useful Phrases**
-6. **Polite vs Casual Form**
-7. **Cultural Tips**
-8. **Mini Practice Sentences**
-
-🚫 DO NOT: introduce yourself again in each reply or restate your name.
-
-📝 Conversation so far:
-${conversationHistory}
-New message from student:
-"${userMessage}"
-Now, respond to the last student message only, but build on what you've already taught. Don't repeat concepts unless the student is confused. Gently reinforce and continue the teaching flow.
-
-`;
-
-            const response = await fetch(GEMINI_API_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    contents: [{
-                        parts: [{ text: prompt }]
-                    }],
-                    generationConfig: {
-                        temperature: 0.8,
-                        topK: 40,
-                        topP: 0.95,
-                        maxOutputTokens: 1024,
-                        stopSequences: []
-                    }
-                })
-            });
-
-            if (!response.ok) {
-                throw new Error(`Failed to get response from AI tutor: ${response.status} ${response.statusText}`);
-            }
-
-            const data = await response.json();
-
-            if (!data?.candidates?.[0]?.content?.parts?.[0]?.text) {
-                throw new Error("No valid response received");
-            }
-
-            return data.candidates[0].content.parts[0].text;
-        } catch (error) {
-            console.error('Error calling Gemini API:', error);
-            return "申し訳ありません (Sumimasen) - I'm sorry, I'm having trouble connecting right now. Could you try asking again? I'm here to help you learn Japanese!";
-        }
-    };
     const handleSendMessage = async () => {
         if (!inputMessage.trim() || isLoading) return;
+        setIsLoading(true);
 
-        const userMessage = {
-            id: Date.now(),
+        const userMessage = { 
             type: 'student',
             content: inputMessage,
             timestamp: new Date()
         };
 
-        setMessages(prev => [...prev, userMessage]);
-        setUserHistory(prev => [...prev, inputMessage]);
-        setInputMessage('');
-        setIsLoading(true);
-
         try {
-            const tutorResponse = await generateTutorResponse(inputMessage);
-
-            const tutorMessage = {
-                id: Date.now() + 1,
-                type: 'tutor',
-                content: tutorResponse,
-                timestamp: new Date()
-            };
-
-            setMessages(prev => [...prev, tutorMessage]);
-        } catch (error) {
-            const errorMessage = {
-                id: Date.now() + 1,
-                type: 'tutor',
-                content: "I apologize, but I'm having some technical difficulties. Please try again in a moment. がんばって！(Ganbatte - Keep trying!)",
-                timestamp: new Date()
-            };
-            setMessages(prev => [...prev, errorMessage]);
+            await addMessage(userMessage);
+            setInputMessage('');
+        } catch (err) {
+            console.error(err);
         } finally {
             setIsLoading(false);
         }
     };
+
 
     const handleKeyPress = (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {

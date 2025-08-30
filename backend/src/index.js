@@ -11,7 +11,7 @@ import profileRoute from "./routes/profile.route.js"
 import courseRoute from "./routes/course.route.js"
 import supportRoute from "./routes/support.route.js"
 import aiRoute from "./routes/ai.route.js"
-
+import { initVectorStore } from "./lib/rag.js";
 dotenv.config()
 const PORT=process.env.PORT
 const __dirname = path.resolve();
@@ -41,7 +41,17 @@ if ( process.env.NODE_ENV==="production"){
       res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
     })
   }
-  app.listen(PORT, ()=>{ 
-    console.log(`server is running on port ${PORT}`)
-    connectDB()
-})   
+  (async () => {
+  try {
+    await initVectorStore(); // Initialize Gemini + Pinecone vector store
+    console.log("Vector store initialized successfully.");
+
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+      connectDB(); // Connect to MongoDB
+    });
+  } catch (err) {
+    console.error("Failed to initialize server:", err);
+    process.exit(1);
+  }
+})();  

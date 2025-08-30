@@ -12,6 +12,9 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@langchain/core": "^0.3.72",
+    "@langchain/google-genai": "^0.2.16",
+    "@langchain/pinecone": "^0.2.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.3",
     "cloudinary": "^2.5.1",
@@ -22,6 +25,7 @@
     "jsonwebtoken": "^9.0.2",
     "kata-hira": "file:..",
     "kata-v2": "file:..",
+    "langchain": "^0.3.31",
     "mongoose": "^8.9.5",
     "socket.io": "^4.8.1"
   },
