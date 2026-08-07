@@ -13,7 +13,7 @@ export async function initVectorStore() {
 
     const pinecone = new Pinecone({ apiKey: process.env.PINECONE_KEY });
     const index = pinecone.index("japanese-tutor");
-
+ 
     vectorstore = await PineconeStore.fromExistingIndex(embeddings, { pineconeIndex: index });
     console.log("✅ Vector store initialized with Gemini embeddings.");
   } catch (err) {
